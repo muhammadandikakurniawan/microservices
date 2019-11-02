@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
+import com.JavaService.m1_java_springboot.entity.UserEntity;
 import com.JavaService.m1_java_springboot.model.*;
 import com.JavaService.m1_java_springboot.repository.*;
 
@@ -25,20 +26,22 @@ public class UserDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-//	@Autowired
-//	private ObjectMapper ObjJackson;
 	
-//	@Transactional(rollbackFor = {Exception.class},propagation=Propagation.REQUIRED)
+	@Transactional(rollbackFor = {Exception.class},propagation=Propagation.REQUIRED)
 	public int InsertUser(UserModel dataUser){
-		
-//		HashMap<String,String> result = new HashMap<String,String>(){{put("status","fail");}};
 		int process = 0;
 		try {
 			ObjectMapper ObjJackson = new ObjectMapper(); 
-			process =  this.userRepository.Insert(ObjJackson.writeValueAsString(dataUser));
+			UserEntity userEntity = new UserEntity();
+			userEntity.setData(ObjJackson.writeValueAsString(dataUser));
+//			process =  this.userRepository.Insert(ObjJackson.writeValueAsString(userEntity));
+			this.userRepository.save(userEntity);
+			process = 1;
 		}
 		catch (IOException ex) {
 			ex.printStackTrace();
+			TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
+			TransactionInterceptor.currentTransactionStatus().flush();
 		}
 		
 		return process;

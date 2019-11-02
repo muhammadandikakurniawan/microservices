@@ -24,16 +24,17 @@ public class UserController {
 	
 	@PostMapping(produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	@CrossOrigin
-	public Integer PostUser(@Valid @RequestBody UserModel dataUser) throws Exception{
-//		HashMap<String,String> result = new HashMap<String,String>(){ {put("status","failed");} };
-//		try {
-//			result.replace("status", this.userDao.InsertUser(dataUser));
-//		}
-//		catch(Exception ex) {
-//			result.replace("message", ex.getMessage());
-//		}
+	public HashMap<String,String> PostUser(@Valid @RequestBody UserModel dataUser) throws Exception{
+		HashMap<String,String> result = new HashMap<String,String>(){ {put("status","failed");} };
+		try {
+			Integer process = this.userDao.InsertUser(dataUser);
+			result.replace("status", process >= 1 ? "success":"failed");
+		}
+		catch(Exception ex) {
+			result.replace("status", "error");
+			result.put("message", ex.getMessage());
+		}
 		dataUser.setUser_id(System.currentTimeMillis()+"");
-		Integer process = this.userDao.InsertUser(dataUser);
-		return process;
+		return result;
 	}
 }
