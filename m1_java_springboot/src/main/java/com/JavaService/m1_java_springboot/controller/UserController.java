@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.JavaService.m1_java_springboot.dao.*;
+import com.JavaService.m1_java_springboot.entity.UserEntity;
 import com.JavaService.m1_java_springboot.model.*;
 import com.JavaService.m1_java_springboot.repository.*;
+import com.JavaService.m1_java_springboot.service.*;
 
 import org.springframework.http.MediaType;
 
@@ -22,7 +24,10 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepository;
 	
-	@PostMapping(produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+	@Autowired
+	private UserService userService;
+	
+	@PostMapping(value="/register",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	@CrossOrigin
 	public HashMap<String,String> PostUser(@Valid @RequestBody UserModel dataUser) throws Exception{
 		HashMap<String,String> result = new HashMap<String,String>(){ {put("status","failed");} };
@@ -34,7 +39,12 @@ public class UserController {
 			result.replace("status", "error");
 			result.put("message", ex.getMessage());
 		}
-		dataUser.setUser_id(System.currentTimeMillis()+"");
 		return result;
+	}
+	
+	@PostMapping(value="/encrypt",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+	@CrossOrigin
+	public String encrypt(@RequestBody UserEntity user) throws Exception{
+		    return userService.EncryptPassword(user.getUser_password());
 	}
 }
