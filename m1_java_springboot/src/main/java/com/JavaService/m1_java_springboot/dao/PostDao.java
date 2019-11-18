@@ -26,6 +26,7 @@ import com.JavaService.m1_java_springboot.repository.PostRepository;
 import com.JavaService.m1_java_springboot.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 import java.sql.Timestamp;
 
 @Service
@@ -48,7 +49,6 @@ public class PostDao {
 	@Transactional(rollbackFor = {Exception.class},propagation=Propagation.REQUIRED)
 	public HashMap<String, Object> insertPost(PostModel dataPost){
 		HashMap<String,Object> result = new HashMap<String,Object>();
-		int process = 0;
 		try{
 			dataPost.setPost_id("POST-"+System.currentTimeMillis());
 			
@@ -64,12 +64,9 @@ public class PostDao {
 			postEntity.setData(objectMapper.writeValueAsString(dataPost));
 			
 			this.postRepository.save(postEntity);
-			process = 1;
-			
 			result.put("status", "success");
 			
 		}catch(Exception ex) {
-			process = 0;
 			result.put("status", "error");
 			result.put("error message", ex.getMessage());
 			TransactionInterceptor.currentTransactionStatus().setRollbackOnly();

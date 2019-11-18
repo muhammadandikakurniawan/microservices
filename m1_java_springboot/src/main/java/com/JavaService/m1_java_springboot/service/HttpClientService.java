@@ -43,6 +43,7 @@ public class HttpClientService {
 	    CloseableHttpResponse response = client.execute(httpPost);
 	    String content = EntityUtils.toString(response.getEntity());
 	    List<Object> dt = Arrays.asList(objMapper.readValue(content, Object[].class));
+	    client.close();
 	    return dt;
 	}
 }

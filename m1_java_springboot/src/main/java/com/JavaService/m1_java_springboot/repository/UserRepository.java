@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 	 @Query(value = "INSERT INTO tb_user (data) VALUES (?1)",nativeQuery = true)
 	 public Object InsertUser(String data);
 
-	 @Query(value = "SELECT * FROM public.tb_user usr WHERE usr.user_id = :id",nativeQuery = true)
-	 public UserEntity getUserById(@Param("id") String id);
+	 @Query(value = "SELECT * FROM public.tb_user usr WHERE usr.user_id = concat(',:id,')",nativeQuery = true)
+	 public List<UserEntity> getUserById(@Param("id") String id);
 
 }

@@ -32,11 +32,9 @@ import com.JavaService.m1_java_springboot.entity.*;
 import com.JavaService.m1_java_springboot.model.*;
 import com.JavaService.m1_java_springboot.repository.*;
 import com.JavaService.m1_java_springboot.service.HttpClientService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@CrossOrigin
-//@CrossOrigin(origins= {"*"})
-//@CrossOrigin
 @RequestMapping("/m1_java_springboot/post")
 public class PostController {
 	
@@ -57,29 +55,39 @@ public class PostController {
 	
 	@Autowired
 	private HttpServletRequest req;
+	
+	private List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
+	@CrossOrigin
 	@RequestMapping(value = "/testapi", method = RequestMethod.POST)
-	public HashMap<String,String> testapi(@RequestParam(value="data") String data){
+	public HashMap<String,String> testapi(@RequestBody String data){
 		HashMap<String,String> result = new HashMap<String,String>(){ {put("status","failed");} };
-//	       CorsConfiguration configuration = new CorsConfiguration();
-//	        configuration.setAllowedOrigins(Arrays.asList("*"));
-//	        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-//		res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Content-Length, X-Requested-With, Accept");
-		result.put("data", data);
-		result.put("header", this.req.getHeader("Authorization"));
-		result.put("content_type", req.getHeader("Content-Type"));
+		try {
+			result.put("data", data);
+			result.put("header", this.req.getHeader("Authorization"));
+			result.put("content_type", req.getHeader("Content-Type"));
+			System.out.println("=============================== IN CONTROLLER ====================================");
+			System.out.println("auth = "+this.req.getHeader("Authorization"));
+			System.out.println("data = "+data);
+			System.out.println("=============================== IN CONTROLLER ====================================");
+		}catch(Exception ex) {
+			System.out.println("=============================== CONTROLLER ERROR ====================================");
+		}
 		return result;
 	}
 	
-
-	@PostMapping(value = "/insert",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+	@CrossOrigin
+	@RequestMapping(value = "/insert", method = RequestMethod.POST)
 	public HashMap<String,String> insertPost(@RequestBody PostModel dataPost){
 		HashMap<String,String> result = new HashMap<String,String>(){ {put("status","failed");} };
+		System.out.print("get post by user id = "+this.userRepository.getUserById(dataPost.getUser_id()).size());
 		try {
-
-			if(this.userRepository.getUserById(dataPost.getUser_id()) != null) {
+			System.out.println("=============================== IN CONTROLLER ====================================");
+			System.out.println("auth = "+this.req.getHeader("Authorization"));
+			if(this.userRepository.getUserById(dataPost.getUser_id()).size() != 0) {
 				String statusInsert = this.postDao.insertPost(dataPost).get("status").toString().equalsIgnoreCase("success")? "success":"failed";
 				result.replace("status", statusInsert);
+//				SseEmitter sseEmitter = new SseEmitter();
 			}
 			else {
 				result.replace("status", "failed");
@@ -88,30 +96,39 @@ public class PostController {
 		}catch(Exception ex) {
 			result.replace("status", "error");
 			result.put("message", ex.getMessage());
+			System.out.println("=============================== CONTROLLER ERROR ====================================");
 		}
 		return result;
 	}
 	
+	@CrossOrigin
 	@PostMapping(value="/get",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public List<PostEntity> getPost(){
+	public List<PostEntity> getPost(@RequestBody PostEntity data){
 		HashMap<String,String> result = new HashMap<String,String>(){ {put("status","failed");} };
+		System.out.println("=============================== CONTROLLER GET ====================================");
+		System.out.println("auth = "+this.req.getHeader("Authorization"));
 		return this.postRepository.findAll();
 	}
 	
+	@CrossOrigin
 	@PostMapping(value="/getcl",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public List<Object> getPostCl() throws ClientProtocolException, IOException{
 		return this.httpClientService.PostGetList("http://localhost:8080/m1_java_springboot/post/get");
 	}
 	
+	@CrossOrigin
 	@PostMapping(value="/getbytitle",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	
 	public List<PostEntity> getPostByTitle(@RequestBody PostModel data) throws ClientProtocolException, IOException{
+		ObjectMapper objMapper = new ObjectMapper();
+		System.out.println("=============================== CONTROLLER getbytitle ====================================");
+		System.out.println("data = "+objMapper.writeValueAsString(data));
 		return this.postRepository.GetPostByTitle(data.getPost_title());
 	}
 	
+	@CrossOrigin
 	@PostMapping(value="/filter",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	
 	public List<Object> filtePost(@RequestBody PostEntity data) throws ClientProtocolException, IOException{
+		System.out.println("auth = "+this.req.getHeader("Authorization"));
 		return this.postDao.filterPost(data);
 	}
 	
