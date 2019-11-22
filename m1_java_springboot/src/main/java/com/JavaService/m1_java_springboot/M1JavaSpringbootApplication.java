@@ -6,6 +6,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableMBeanExport;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import springfox.documentation.builders.PathSelectors;
@@ -17,10 +19,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import com.JavaService.m1_java_springboot.filter.AuthFilter;
 
 @SpringBootApplication
-@EnableSwagger2
-@ComponentScan()
-@EnableScheduling
-@EnableMBeanExport(defaultDomain="m1_java_springboot")
+//@EnableSwagger2
+//@ComponentScan()
+//@EnableScheduling
+//@EnableMBeanExport(defaultDomain="m1_java_springboot")
 public class M1JavaSpringbootApplication {
 
 	public static void main(String[] args) {
@@ -35,6 +37,13 @@ public class M1JavaSpringbootApplication {
         registration.addUrlPatterns("/m1_java_springboot/*");
         registration.setOrder(1);
         return registration;
+    }
+    
+    public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer properties = new PropertySourcesPlaceholderConfigurer();
+        properties.setLocation(new FileSystemResource("D:/programming/project/microservices/sit/config/configSpring.properties"));
+        properties.setIgnoreResourceNotFound(false);
+        return properties;
     }
     
 //    @Bean
