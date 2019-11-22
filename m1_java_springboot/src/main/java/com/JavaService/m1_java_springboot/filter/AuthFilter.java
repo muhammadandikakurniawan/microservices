@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 @Component
-@Order(1)
+
 public class AuthFilter implements Filter{
 	
 	@Autowired
@@ -29,11 +29,9 @@ public class AuthFilter implements Filter{
 		HttpServletResponse httpresponse = (HttpServletResponse) response;
 		String Authorization = httprequest.getHeader("Authorization");
 		System.out.println("===============================run===================================");
-		System.out.println("authorization : "+Authorization);
-		System.out.println("authorization from out of method: "+this.req.getHeader("Authorization"));
+		System.out.println(httprequest.getParameter("file"));
+		System.out.println("authorization (auth filter) : "+Authorization);
 		System.out.println("endpoint : "+httprequest.getRequestURI());
-		System.out.println("data : "+httprequest.getParameter("data"));
-		System.out.println("Authorization null or no : "+httprequest.getHeader("Authorization")!=null);
 
 		try {
 			if(Authorization != null || Authorization != "") {
@@ -54,7 +52,9 @@ public class AuthFilter implements Filter{
 		}
 		catch(NullPointerException ex) {
 			httpresponse.sendError(httpresponse.SC_UNAUTHORIZED);
-			System.out.println("error null");
+			System.out.println("====================== error ======================");
+			System.out.println(ex.getMessage());
+			System.out.println("====================== error ======================");
 		}
 		
 	}

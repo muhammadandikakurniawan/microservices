@@ -1,6 +1,7 @@
 package com.JavaService.m1_java_springboot.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -128,8 +129,16 @@ public class PostController {
 	@CrossOrigin
 	@PostMapping(value="/filter",produces={MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public List<Object> filtePost(@RequestBody PostEntity data) throws ClientProtocolException, IOException{
-		System.out.println("auth = "+this.req.getHeader("Authorization"));
-		return this.postDao.filterPost(data);
+		ObjectMapper objMapper = new ObjectMapper();
+		System.out.print("request param = ");
+		System.out.println(objMapper.writeValueAsString(data));
+		List<Object> result = new ArrayList<Object>();
+ 		try {
+			result = this.postDao.filterPost(data);
+		}catch(Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+		return result ;
 	}
 	
 

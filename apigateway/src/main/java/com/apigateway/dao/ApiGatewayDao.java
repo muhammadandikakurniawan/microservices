@@ -25,7 +25,7 @@ public class ApiGatewayDao {
 	@Transactional(rollbackFor = {Exception.class},propagation=Propagation.REQUIRED)
 	public Integer AddLog() {
 		ApiGatewayEntity dataLog = new ApiGatewayEntity();
-		dataLog.setClient(this.httpReq.getRemoteAddr());
+		dataLog.setClient(this.httpReq.getHeader("origin"));
 		dataLog.setEnd_point(this.httpReq.getRequestURI());
 		Integer res = 0;
 		try {
