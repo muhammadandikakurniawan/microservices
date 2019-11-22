@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.JavaService.m1_java_springboot.model.ConfigurationModel;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/test")
@@ -18,8 +20,8 @@ public class TestController {
 	@Autowired
 	private Environment env;
 	
-	@Value("${service.name}")
-	String serviceName;
+	@Autowired
+	private ConfigurationModel configModel;
 	
 	@RequestMapping(value="/envvar",method=RequestMethod.GET)
 	public HashMap<String,Object> EnviVar(){
@@ -29,7 +31,7 @@ public class TestController {
 		String env_wind = System.getenv("service.name");
 		
 //		res.put("env_name",env_name);
-		res.put("env_wind",this.serviceName);
+		res.put("env_wind",this.configModel.getServiceName());
 		
 		return res;
 	}
