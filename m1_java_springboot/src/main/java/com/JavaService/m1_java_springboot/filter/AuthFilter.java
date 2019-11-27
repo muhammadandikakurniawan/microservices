@@ -2,6 +2,7 @@ package com.JavaService.m1_java_springboot.filter;
 
 import java.io.IOException;
 
+import javax.naming.AuthenticationException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -48,6 +49,7 @@ public class AuthFilter implements Filter{
 			else {
 				System.out.println("UnAuthorized");
 				httpresponse.sendError(httpresponse.SC_UNAUTHORIZED);
+				throw new AuthenticationException();
 			}
 		}
 		catch(NullPointerException ex) {
@@ -55,6 +57,9 @@ public class AuthFilter implements Filter{
 			System.out.println("====================== error ======================");
 			System.out.println(ex.getMessage());
 			System.out.println("====================== error ======================");
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}

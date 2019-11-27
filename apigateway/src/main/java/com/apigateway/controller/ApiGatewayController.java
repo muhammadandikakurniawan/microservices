@@ -65,7 +65,7 @@ public class ApiGatewayController {
 		ObjectMapper objMapper = new ObjectMapper();
 		 CloseableHttpClient client = HttpClients.createDefault();
 		 StringEntity entity = new StringEntity(data);
-		 HttpPost httpPost = new HttpPost("http://localhost:8888/m1_java_springboot/post/filter");
+		 HttpPost httpPost = new HttpPost("http://localhost:8885/m1_java_springboot/post/filter");
 		 httpPost.addHeader("Authorization",httpRequest.getHeader("Authorization"));
 		 httpPost.addHeader("Content-Type","application/json");
 		 httpPost.addHeader("Accept","application/json");
@@ -74,6 +74,7 @@ public class ApiGatewayController {
 		 System.out.println("===========================================================================");
 		 System.out.println("add log process = "+addLogProc);
 		 System.out.println("data = "+data);
+		 System.out.println("Authorization = "+httpRequest.getHeader("Authorization"));
 		 CloseableHttpResponse response = client.execute(httpPost);
 		try {
 			
@@ -110,7 +111,7 @@ public class ApiGatewayController {
 		
 		CloseableHttpClient closeableHttp = HttpClients.createDefault();
 		
-		HttpPost httpPost = new HttpPost("http://localhost:8888/m1_java_springboot/filemanage/base64upload");
+		HttpPost httpPost = new HttpPost("http://localhost:8885/m1_java_springboot/filemanage/base64upload");
 		
 		InputStream inputStrm = file.getInputStream();
 		BufferedInputStream bufferFile = new BufferedInputStream(inputStrm);

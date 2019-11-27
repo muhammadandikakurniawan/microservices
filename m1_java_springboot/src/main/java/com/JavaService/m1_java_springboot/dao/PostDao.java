@@ -96,4 +96,25 @@ public class PostDao {
 	}
 	
 	
+	@Transactional(rollbackFor = {Exception.class},propagation=Propagation.REQUIRED)
+	public List<Object> EditPost(PostEntity dataPost){
+		HashMap<String,Object> result = new HashMap<String,Object>();
+		ObjectMapper objectMapper = new ObjectMapper();
+		return this.jdbcTemplate.query("select * from filterPost(?,?,?)",
+				new Object[]{
+						dataPost.getPost_id(),
+						dataPost.getUser_id(),
+						dataPost.getPost_title()
+				}, 
+				(res,rown) -> new HashMap<String,Object>(){
+					{
+						put("id",res.getObject("id"));
+						put("post_title",res.getObject("post_title"));
+						put("post_id",res.getObject("post_id"));
+						put("user_id",res.getObject("user_id"));
+					}
+				});
+	}
+	
+	
 }
